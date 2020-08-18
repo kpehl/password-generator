@@ -35,7 +35,7 @@ initialize = function() {
   ];  
 }
 
-// A function to get user input
+// A function to get user input for requirements 
 var getRequirements = function() {
   initialize();
   // Loop through the array of requirements
@@ -89,6 +89,14 @@ var getRequirements = function() {
   }
 }
 
+// The character sets are defined. The special character set is " !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"  -- the \ escape is used to define the string
+var upperCaseSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+var lowerCaseSet = "abcdefghijklmnopqrstuvwxyz";
+var numericSet = "0123456789";
+var specialSet = " \!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+
+
+
 
 // A function to generate the password
 function generatePassword() {
@@ -100,6 +108,8 @@ function generatePassword() {
     window.alert("Please pick at least one option. Press the Generate Password button to try again.");
     initialize();
   }
+  // Pick a value from each required character set
+  
 }
 
 // Write password to the #password input
