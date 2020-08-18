@@ -65,25 +65,20 @@ var getRequirements = function() {
     var isValidValue;
     charValid = sliceRequirements.every(isNo);
     charValid = !charValid;  // If every selection is no, the entries are not valid
-    console.log("charValid " + charValid);
     // Check that the entered length is within the boundaries
     length = parseInt(passwordRequirements[0].entry);
     if (length < 8 || length > 128) {
-      console.log("length invalid");
       lengthValid = false;
     }
     else {
       lengthValid = true;;
     }
-    console.log("length valid " + lengthValid);
     // If both checks are true, the whole entry is valid, otherwise, it is not
     if (charValid === true && lengthValid === true) {
       isValidValue = true;
-      console.log("valid " + isValidValue);
     }
     else {
       isValidValue = false;
-      console.log("invalid " + isValidValue);
     }
     return isValidValue;
   }
@@ -95,21 +90,58 @@ var lowerCaseSet = "abcdefghijklmnopqrstuvwxyz";
 var numericSet = "0123456789";
 var specialSet = " \!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 
+var charSet = [0,upperCaseSet,lowerCaseSet,numericSet,specialSet];
+
 
 
 
 // A function to generate the password
+
 function generatePassword() {
   // The user is asked for requirements
   getRequirements();
+
   // Entries are validated
   isValidValue = isValid();
   if (isValidValue === false) {
     window.alert("Please pick at least one option. Press the Generate Password button to try again.");
     initialize();
+    return;
   }
-  // Pick a value from each required character set
-  
+
+  // Pick a value from each required character set and join the required character sets into one set to pull remaining values from
+  var requiredChar = "";
+  // var requiredCharIndex = "";
+  var charList = "";
+  for(var i = 1; i < passwordRequirements.length; i++) {
+    var charSetLocal = charSet[i];
+    // console.log(charSetLocal);
+    if (passwordRequirements[i].entry === "no") {
+      continue;
+    }
+    else {
+      randomNumber = Math.floor(Math.random() * charSetLocal.length);
+      requiredChar += charSetLocal.substring(randomNumber,randomNumber+1);
+      // requiredCharIndex += i;
+      charList += charSetLocal;
+    }
+    console.log(requiredChar);
+    // console.log(requiredCharIndex);
+    console.log(charList);
+  }
+  // Determine the remaining characters needed
+  var remainingLength = passwordRequirements[0].entry - requiredChar.length;
+  console.log(remainingLength);
+
+  // Generate the password
+  password = requiredChar;
+  for(var i = 0; i < remainingLength; i++) {
+    randomNumber = Math.floor(Math.random() * charList.length);
+    password += charList.substring(randomNumber,randomNumber+1);
+  }
+  console.log(password);
+  return password
+
 }
 
 // Write password to the #password input
