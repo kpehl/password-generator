@@ -9,4 +9,4 @@ CAUTION: This generator is only pseudo-random.  Do not use this password generat
 This page is hosted at https://kpehl.github.io/password-generator/Develop/
 
 ## Screenshot
-![screenshot]
+![screenshot](./PasswordGeneratorScreenshot.png)
