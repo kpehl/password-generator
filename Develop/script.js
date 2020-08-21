@@ -4,32 +4,37 @@
 // Get references to the #generate element
 var generateBtn = document.querySelector("#generate");
 
+// Define the validation variables so they can be used throughout
+var lengthValid;
+var charValid;
+
 // Password requirements are initialized in an array. A function is used so values can be re-set.
 initialize = function() {
+  
   passwordRequirements = [
     {
       name: "Length",
-      request: "How many characters long should the password be?  Enter a value in-between 8 and 128.",
+      request: "How many characters long should the password be? Enter a value in-between 8 and 128.",
       entry: null
     },
     {
       name: "Upper Case",
-      request: "Should the password include upper case letters?  Enter yes or no.",
+      request: "Should the password include upper case letters? Enter OK for yes or Cancel for no.",
       entry: null
     },
     {
       name: "Lower Case",
-      request: "Should the password include lower case letters? Enter yes or no.",
+      request: "Should the password include lower case letters? Enter OK for yes or Cancel for no.",
       entry: null
     },
     {
       name: "Numeric",
-      request: "Should the password include numbers?  Enter yes or no",
+      request: "Should the password include numbers? Enter OK for yes or Cancel for no.",
       entry: null
     },
     {
       name: "Special Characters",
-      request: "Should the password include special characters?  Enter yes or no.",
+      request: "Should the password include special characters? Enter OK for yes or Cancel for no.",
       entry: null
     }
   ];  
@@ -41,47 +46,38 @@ var getRequirements = function() {
   // Loop through the array of requirements
   for(var i = 0; i < passwordRequirements.length; i++) {
     // While the values are null, the loop will run
-    while (!passwordRequirements[i].entry) {
-      passwordRequirements[i].entry = prompt(passwordRequirements[i].request);
+    while (passwordRequirements[i].entry == null) {
+      if(i == 0) {
+        passwordRequirements[i].entry = prompt(passwordRequirements[i].request);
+          // Check that the entered length is within the boundaries
+          length = parseInt(passwordRequirements[i].entry);
+          if (length < 8 || length > 128) {
+            lengthValid = false;
+            window.alert("Please pick a valid length. Try again.");
+            writePassword();
+            return;
+          }
+          else {
+            lengthValid = true;;
+          }                 
+      }
+      else {
+      passwordRequirements[i].entry = confirm(passwordRequirements[i].request);
+      }
     }
-    // Change the entry to lower case for all string entries
-    passwordRequirements[i].entry = passwordRequirements[i].entry.toLowerCase();
   }
 
   // Slice the requirements array to remove the password length
   var sliceRequirements = passwordRequirements.slice(1);
 
-  //Print the requirements arrays to the console to check values
-  console.log(passwordRequirements);
-  console.log(sliceRequirements);
-
   // Check that at least one option was chosen. 
   var isNo = function (value) {
-    return value.entry === "no";
+    return value.entry === false;
   }
-  isValid = function() {
-    var charValid;
-    var lengthValid;
-    var isValidValue;
-    charValid = sliceRequirements.every(isNo);
-    charValid = !charValid;  // If every selection is no, the entries are not valid
-    // Check that the entered length is within the boundaries
-    length = parseInt(passwordRequirements[0].entry);
-    if (length < 8 || length > 128) {
-      lengthValid = false;
-    }
-    else {
-      lengthValid = true;;
-    }
-    // If both checks are true, the whole entry is valid, otherwise, it is not
-    if (charValid === true && lengthValid === true) {
-      isValidValue = true;
-    }
-    else {
-      isValidValue = false;
-    }
-    return isValidValue;
-  }
+
+  charValid = sliceRequirements.every(isNo)
+  charValid = !charValid;  // If every selection is no, the entries are not valid
+
 }
 
 // The character sets are defined. The special character set is " !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"  -- the \ escape is used to define the string
@@ -96,14 +92,12 @@ var charSet = [0,upperCaseSet,lowerCaseSet,numericSet,specialSet];
 
 
 // A function to generate the password
-
 function generatePassword() {
   // The user is asked for requirements
   getRequirements();
 
-  // Entries are validated
-  isValidValue = isValid();
-  if (isValidValue === false) {
+  // The non-length entries are validated
+  if (charValid === false) {
     window.alert("Please pick at least one option. Press the Generate Password button to try again.");
     initialize();
     return;
@@ -116,7 +110,7 @@ function generatePassword() {
   for(var i = 1; i < passwordRequirements.length; i++) {
     var charSetLocal = charSet[i];
     // console.log(charSetLocal);
-    if (passwordRequirements[i].entry === "no") {
+    if (passwordRequirements[i].entry === false) {
       continue;
     }
     else {
@@ -125,13 +119,10 @@ function generatePassword() {
       // requiredCharIndex += i;
       charList += charSetLocal;
     }
-    console.log(requiredChar);
-    // console.log(requiredCharIndex);
-    console.log(charList);
   }
+
   // Determine the remaining characters needed
   var remainingLength = passwordRequirements[0].entry - requiredChar.length;
-  console.log(remainingLength);
 
   // Generate the password
   password = requiredChar;
@@ -139,9 +130,9 @@ function generatePassword() {
     randomNumber = Math.floor(Math.random() * charList.length);
     password += charList.substring(randomNumber,randomNumber+1);
   }
-  console.log(password);
-  return password
 
+  // Return the password as an output of the function
+  return password
 }
 
 // Write password to the #password input
